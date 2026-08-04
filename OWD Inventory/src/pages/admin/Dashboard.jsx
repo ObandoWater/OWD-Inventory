@@ -1,23 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../../config/firebase';
+import AddItemModal from '../../components/ui/AddItemModal';
+import Sidebar from '../../components/layout/Sidebar';
 import '../../index.css';
 
 export default function AdminDashboard() {
   const [inventory, setInventory] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    // Listen to the 'items' collection in real-time
-    const unsubscribe = onSnapshot(collection(db, "items"), (snapshot) => {
-      const itemsList = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setInventory(itemsList);
-    });
+  // track if the modal is open or closed
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Cleanup listener when component unmounts
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "items"), 
+      (snapshot) => {
+        const itemsList = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setInventory(itemsList);
+      },
+      (error) => console.error("Error fetching inventory: ", error.message)
+    );
     return () => unsubscribe();
   }, []);
 
@@ -25,23 +30,13 @@ export default function AdminDashboard() {
     <div className="admin-layout">
       
       {/* SIDEBAR */}
-      <aside className="sidebar">
-        <div className="avatar-placeholder"></div>
-        <div className="yellow-divider"></div>
-        
-        <div className="nav-links">
-          <div className="nav-item"></div>
-          <div className="nav-item"></div>
-        </div>
-
-        <button className="collapse-btn">&lt;</button>
-        <button className="logout-btn"></button>
-      </aside>
+      <Sidebar />
 
       {/* MAIN CONTENT */}
       <main className="main-content">
         <header className="admin-header">
           <h1>Inventory</h1>
+          <button className="add-btn" onClick={() => setIsModalOpen(true)}>+ Add New Item</button>
         </header>
 
         <section className="table-container">
@@ -58,6 +53,7 @@ export default function AdminDashboard() {
               <tr>
                 <th>ITEM NAME &#9662;</th>
                 <th>CATEGORY</th>
+                <th>UNIT</th>
                 <th>QUANTITY</th>
                 <th style={{ textAlign: 'center' }}>ACTION</th>
               </tr>
@@ -68,6 +64,7 @@ export default function AdminDashboard() {
                 <tr key={item.id}>
                   <td>{item.name}</td>
                   <td>{item.category}</td>
+                  <td>{item.unit}</td>
                   <td>{item.currentStock}</td>
                   <td style={{ textAlign: 'center' }}>
                     <button className="edit-btn">Edit</button>
@@ -85,6 +82,12 @@ export default function AdminDashboard() {
           </table>
         </section>
       </main>
+
+      <AddItemModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+
     </div>
   );
 }

@@ -23,6 +23,26 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  transition: width 0.3s ease;
+  overflow: visible;
+}
+
+.sidebar.collapsed {
+  width: 0px;
+}
+
+/* Hide elements when collapsed */
+.sidebar.collapsed .avatar-placeholder,
+.sidebar.collapsed .nav-item,
+.sidebar.collapsed .logout-btn {
+  opacity: 0;
+  pointer-events: none; /* Prevents clicking invisible elements */
+}
+
+.sidebar .avatar-placeholder,
+.sidebar .nav-item,
+.sidebar .logout-btn {
+  transition: opacity 0.2s ease;
 }
 
 .avatar-placeholder {
@@ -44,6 +64,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  position: relative;
 }
 
 .nav-item {
@@ -54,26 +75,36 @@ body {
 
 .collapse-btn {
   position: absolute;
-  right: -15px;
-  top: 220px;
+  right: -15px; /* Hangs half outside the sidebar */
+  top: 50%; /* Center it vertically... */
+  transform: translateY(-50%); /* ...perfectly against the .nav-links container */
   background-color: #ffeb3b;
   border: none;
   padding: 8px 12px;
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  z-index: 10;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
 .logout-btn {
   margin-top: auto;
   margin-bottom: 30px;
   background-color: #c83f3f; /* Red button */
+  color: #FFFF;
+  font-weight: bold;
+  font-size: 18px;
   border: none;
   height: 45px;
   width: 60%;
   align-self: center;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.sidebar.collapsed .collapse-btn {
+  transform: translateY(-50%) translateX(25%) rotate(180deg);
 }
 
 .main-content {
@@ -87,6 +118,9 @@ body {
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 30px;
+  justify-content: space-between;
+  display: flex;
+  flex-direction: row;
 }
 
 .admin-header h1 {
@@ -275,4 +309,185 @@ body {
   border-radius: 6px;
   margin-bottom: 15px;
   font-size: 14px;
+}
+
+
+/* --- ADD INVENTORY MODAL STYLES --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  color: #1b3671;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.save-btn {
+  background-color: #2b50c0;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-btn {
+  background-color: #2b50c0;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+/* --- USER PAGINATION STYLES --- */
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: white;
+  border-top: 1px solid #eee;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #666;
+}
+
+.page-btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.page-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.page-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* --- USER CHECKOUT MODAL STYLES --- */
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row-2 {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row-2 input {
+  flex: 1; /* Makes both inputs take up exactly 50% of the row */
+}
+
+.checkout-input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  width: 100%;
+  font-size: 14px;
+}
+
+/* Make disabled inputs look intentionally locked */
+.checkout-input:disabled {
+  background-color: #eef1f6;
+  color: #666;
+  cursor: not-allowed;
+}
+
+textarea.checkout-input {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.checkout-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-cancel {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-confirm {
+  background-color: #ffeb3b; /* Yellow from your mockup */
+  color: #1b3671;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
 }
