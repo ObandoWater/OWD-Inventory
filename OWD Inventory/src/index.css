@@ -107,6 +107,36 @@ body {
   transform: translateY(-50%) translateX(25%) rotate(180deg);
 }
 
+/* --- SIDEBAR NAVIGATION STYLES --- */
+.nav-item {
+  display: block;
+  padding: 12px 15px;
+  background-color: #f0f0f0;
+  color: #333;
+  text-decoration: none; /* Removes the default blue underline from Links */
+  font-weight: bold;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap; /* Prevents text from wrapping when the sidebar collapses */
+  overflow: hidden;
+}
+
+.nav-item:hover {
+  background-color: #e0e0e0;
+}
+
+/* The active class applied when the URL matches the link */
+.nav-item.active {
+  background-color: #ffeb3b; 
+  color: #1b3671;
+}
+
+/* Ensure the text hides smoothly when collapsed */
+.sidebar.collapsed .nav-item {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .main-content {
   flex-grow: 1;
   padding: 30px;
@@ -491,3 +521,132 @@ textarea.checkout-input {
   cursor: pointer;
   font-weight: bold;
 }
+
+
+/* --- STATUS BADGES --- */
+.status-in-stock {
+  background-color: #e6f4ea;
+  color: #1e8e3e;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status-out-of-stock {
+  background-color: #fce8e6;
+  color: #c83f3f; /* Matches your red logout button */
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+
+/* --- LOGS PAGE STYLES --- */
+.logs-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.logs-header {
+  background-color: #1b3671;
+  color: white;
+  padding: 20px 30px;
+}
+
+.logs-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.logs-body {
+  padding: 30px;
+}
+
+.logs-desc {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.logs-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+}
+
+.logs-search {
+  width: 300px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.date-filters {
+  display: flex;
+  gap: 20px;
+}
+
+.date-filter-group label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.date-input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* --- LOGS TABLE STYLES --- */
+.logs-table thead tr {
+  background-color: #f5f7fa;
+  color: #555;
+}
+
+.logs-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.log-date {
+  font-size: 14px;
+  color: #555;
+}
+
+.log-user-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.log-user-id {
+  font-size: 12px;
+  color: #888;
+}
+
+.log-action {
+  font-weight: 500;
+  color: #c83f3f;
+}
+
+.log-details {
+  color: #666;
+  max-width: 250px;
+}
+
+.log-empty {
+  text-align: center;
+  padding: 30px;
+  color: #888;
+}
+
+

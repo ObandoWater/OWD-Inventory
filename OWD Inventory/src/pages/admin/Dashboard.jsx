@@ -2,15 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import AddItemModal from '../../components/ui/AddItemModal';
+import EditItemModal from '../../components/ui/EditItemModal';
 import Sidebar from '../../components/layout/Sidebar';
 import '../../index.css';
 
 export default function AdminDashboard() {
   const [inventory, setInventory] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+
+  // --- PAGINATION STATE ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Number of items to display per page
 
   // track if the modal is open or closed
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "items"), 
@@ -20,11 +30,47 @@ export default function AdminDashboard() {
           ...doc.data()
         }));
         setInventory(itemsList);
+
+      // Safety check to avoid blank pages if an item is deleted
+        const maxPages = Math.ceil(itemsList.length / itemsPerPage);
+        if (currentPage > maxPages && maxPages > 0) {
+          setCurrentPage(maxPages);
+        }
       },
       (error) => console.error("Error fetching inventory: ", error.message)
     );
     return () => unsubscribe();
-  }, []);
+  }, [currentPage]);
+
+
+  // --- FILTERING LOGIC ---
+  const filteredInventory = inventory.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+
+    let matchesStatus = true;
+    if (selectedStatus === "In Stock") {
+      matchesStatus = item.currentStock > 0;
+    } else if (selectedStatus === "Out of Stock") {
+      matchesStatus = item.currentStock <= 0;
+    }
+
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
+
+  // Extract unique categories from the database for the dropdown
+  const categories = ["All", ...new Set(inventory.map(item => item.category))];
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, selectedStatus]);
+
+  // --- PAGINATION MATH ---
+  const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = filteredInventory.slice(startIndex, endIndex);
+
 
   return (
     <div className="admin-layout">
@@ -41,10 +87,31 @@ export default function AdminDashboard() {
 
         <section className="table-container">
           <div className="table-controls">
-            <input type="text" placeholder="Search" className="search-input" />
+            <input 
+              type="text" 
+              placeholder="Search" 
+              className="search-input" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
             <div className="filter-group">
-              <select><option>Category</option></select>
-              <select><option>Status</option></select>
+              <select 
+                value={selectedCategory} 
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                {categories.map((category, index) => (
+                  <option key={index} value={category}>{category}</option>
+                ))}
+              </select>
+              {/* Keeping the Status dropdown as a placeholder per your original layout */}
+              <select 
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                <option value="All">All Statuses</option>
+                <option value="In Stock">In Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
+              </select>
             </div>
           </div>
 
@@ -55,37 +122,92 @@ export default function AdminDashboard() {
                 <th>CATEGORY</th>
                 <th>UNIT</th>
                 <th>QUANTITY</th>
+                <th>STATUS</th>
                 <th style={{ textAlign: 'center' }}>ACTION</th>
               </tr>
             </thead>
             <tbody>
-              {/* Loop through the live Firebase data */}
-              {inventory.map((item) => (
+              {/* Loop through the filtered inventory data */}
+              {currentItems.map((item) => (
                 <tr key={item.id}>
                   <td>{item.name}</td>
                   <td>{item.category}</td>
                   <td>{item.unit}</td>
                   <td>{item.currentStock}</td>
+                  <td>
+                    <span className={item.currentStock > 0 ? "status-in-stock" : "status-out-of-stock"}>
+                      {item.currentStock > 0 ? "In Stock" : "Out of Stock"}
+                    </span>
+                  </td>
                   <td style={{ textAlign: 'center' }}>
-                    <button className="edit-btn">Edit</button>
+                    <button 
+                      className="edit-btn"
+                      onClick={() => {
+                        setSelectedItem(item);
+                        setIsEditModalOpen(true);
+                      }}
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
               
               {/* Show this if database is empty */}
-              {inventory.length === 0 && (
+              {filteredInventory.length === 0 && (
                 <tr>
-                  <td colSpan="4" style={{ textAlign: 'center' }}>No items found.</td>
+                  <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>No items found.</td>
                 </tr>
               )}
             </tbody>
           </table>
+
+          {/* PAGINATION CONTROLS */}
+          {filteredInventory.length > 0 && (
+            <div className="pagination-controls">
+              <span className="page-info">
+                Showing {startIndex + 1} to {Math.min(endIndex, filteredInventory.length)} of {filteredInventory.length} entries
+              </span>
+              
+              <div className="page-btn-group">
+                <button 
+                  className="page-btn" 
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                
+                <span style={{ padding: '6px 12px', fontWeight: 'bold' }}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                
+                <button 
+                  className="page-btn" 
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+
         </section>
       </main>
 
       <AddItemModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
+      />
+
+      <EditItemModal 
+        isOpen={isEditModalOpen} 
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedItem(null);
+        }} 
+        item={selectedItem}
       />
 
     </div>

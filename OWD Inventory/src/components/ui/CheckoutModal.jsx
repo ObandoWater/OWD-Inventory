@@ -27,7 +27,6 @@ export default function CheckoutModal({ isOpen, onClose, selectedItem, onConfirm
 
   return (
     <div className="modal-overlay">
-      {/* We make this modal a bit wider to match the Figma design */}
       <div className="modal-content" style={{ width: '500px', padding: '40px' }}>
         
         <form onSubmit={handleSubmit} className="checkout-form">

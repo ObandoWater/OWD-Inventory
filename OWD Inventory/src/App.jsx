@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminLogs from "./pages/admin/Logs";
 import UserInventory from "./pages/user/UserInventory";
 
 function App() {
@@ -18,6 +19,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/logs" 
+          element={
+            <ProtectedRoute>
+              <AdminLogs />
             </ProtectedRoute>
           } 
         />

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom'; // Import Link and useLocation
 import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation(); // This gets the current URL path
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = async () => {
@@ -23,18 +24,29 @@ export default function Sidebar() {
       <div className="yellow-divider"></div>
       
       <div className="nav-links">
-        {/* You can change these to <Link> tags from react-router-dom later! */}
-        <div className="nav-item"></div>
-        <div className="nav-item"></div>
-        <div className="nav-item"></div>
+        {/* Inventory Link */}
+        <Link 
+          to="/admin" 
+          className={`nav-item ${location.pathname === '/admin' ? 'active' : ''}`}
+        >
+          Inventory
+        </Link>
+        
+        {/* Logs Link */}
+        <Link 
+          to="/admin/logs" 
+          className={`nav-item ${location.pathname === '/admin/logs' ? 'active' : ''}`}
+        >
+          Logs
+        </Link>
       </div>
 
       <button 
-          className="collapse-btn" 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-        >
-          &lt;
-        </button>
+        className="collapse-btn" 
+        onClick={() => setIsCollapsed(!isCollapsed)}
+      >
+        &lt;
+      </button>
       
       <button className="logout-btn" onClick={handleLogout}>
         Logout
