@@ -564,6 +564,15 @@ textarea.checkout-input {
   display: inline-block;
 }
 
+.status-low-supply {
+  background-color: #fff3e0; /* Light orange background */
+  color: #e65100;           /* Dark orange text */
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
 
 /* --- LOGS PAGE STYLES --- */
 .logs-card {

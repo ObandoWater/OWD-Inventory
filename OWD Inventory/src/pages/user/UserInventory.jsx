@@ -69,6 +69,7 @@ export default function UserInventory() {
         itemName: checkoutData.item.name,
         employeeName: checkoutData.name,
         employeeId: checkoutData.employeeId,
+        unit: checkoutData.item.unit,
         quantityTaken: Number(checkoutData.quantity),
         note: checkoutData.note,
         timestamp: serverTimestamp() // Uses Google's exact server time

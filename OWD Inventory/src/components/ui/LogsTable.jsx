@@ -23,7 +23,7 @@ export default function LogsTable({ logs }) {
             </td>
             <td>
               <span className="log-action">
-                Checked out {log.quantityTaken} {log.itemName}(s)
+                Checked out {log.quantityTaken} {log.unit} of {log.itemName}(s)
               </span>
             </td>
             <td className="log-details">

@@ -107,7 +107,7 @@ export default function AdminStatistics() {
           </div>
 
           <h2 style={{ marginBottom: '30px', color: '#333' }}>
-            Top 25 Most Requested Items
+            Top 25 Most Used Items
           </h2>
           
           <div className="chart-container" style={{ border: 'none', padding: 0, backgroundColor: 'transparent' }}>

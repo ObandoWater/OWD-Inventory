@@ -14,11 +14,9 @@ export default function AdminDashboard() {
 
   // --- PAGINATION STATE ---
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // Number of items to display per page
+  const itemsPerPage = 10; 
 
-  // track if the modal is open or closed
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -31,7 +29,6 @@ export default function AdminDashboard() {
         }));
         setInventory(itemsList);
 
-      // Safety check to avoid blank pages if an item is deleted
         const maxPages = Math.ceil(itemsList.length / itemsPerPage);
         if (currentPage > maxPages && maxPages > 0) {
           setCurrentPage(maxPages);
@@ -42,7 +39,6 @@ export default function AdminDashboard() {
     return () => unsubscribe();
   }, [currentPage]);
 
-
   // --- FILTERING LOGIC ---
   const filteredInventory = inventory.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -50,7 +46,9 @@ export default function AdminDashboard() {
 
     let matchesStatus = true;
     if (selectedStatus === "In Stock") {
-      matchesStatus = item.currentStock > 0;
+      matchesStatus = item.currentStock >= 15; // Updated to >= 15
+    } else if (selectedStatus === "Low Supply") {
+      matchesStatus = item.currentStock > 0 && item.currentStock < 15; // New logic
     } else if (selectedStatus === "Out of Stock") {
       matchesStatus = item.currentStock <= 0;
     }
@@ -58,27 +56,22 @@ export default function AdminDashboard() {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  // Extract unique categories from the database for the dropdown
   const categories = ["All", ...new Set(inventory.map(item => item.category))];
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory, selectedStatus]);
 
-  // --- PAGINATION MATH ---
   const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = filteredInventory.slice(startIndex, endIndex);
 
-
   return (
     <div className="admin-layout">
       
-      {/* SIDEBAR */}
       <Sidebar />
 
-      {/* MAIN CONTENT */}
       <main className="main-content">
         <header className="admin-header">
           <h1>Inventory</h1>
@@ -103,13 +96,15 @@ export default function AdminDashboard() {
                   <option key={index} value={category}>{category}</option>
                 ))}
               </select>
-              {/* Keeping the Status dropdown as a placeholder per your original layout */}
+              
+              {/* UPDATED STATUS DROPDOWN */}
               <select 
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
               >
                 <option value="All">All Statuses</option>
                 <option value="In Stock">In Stock</option>
+                <option value="Low Supply">Low Supply</option>
                 <option value="Out of Stock">Out of Stock</option>
               </select>
             </div>
@@ -127,42 +122,54 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {/* Loop through the filtered inventory data */}
-              {currentItems.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.category}</td>
-                  <td>{item.unit}</td>
-                  <td>{item.currentStock}</td>
-                  <td>
-                    <span className={item.currentStock > 0 ? "status-in-stock" : "status-out-of-stock"}>
-                      {item.currentStock > 0 ? "In Stock" : "Out of Stock"}
-                    </span>
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <button 
-                      className="edit-btn"
-                      onClick={() => {
-                        setSelectedItem(item);
-                        setIsEditModalOpen(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {currentItems.map((item) => {
+                
+                // Determine status label and CSS class dynamically
+                let statusLabel = "In Stock";
+                let statusClass = "status-in-stock";
+                
+                if (item.currentStock <= 0) {
+                  statusLabel = "Out of Stock";
+                  statusClass = "status-out-of-stock";
+                } else if (item.currentStock < 15) {
+                  statusLabel = "Low Supply";
+                  statusClass = "status-low-supply";
+                }
+
+                return (
+                  <tr key={item.id}>
+                    <td>{item.name}</td>
+                    <td>{item.category}</td>
+                    <td>{item.unit}</td>
+                    <td>{item.currentStock}</td>
+                    <td>
+                      <span className={statusClass}>
+                        {statusLabel}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <button 
+                        className="edit-btn"
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setIsEditModalOpen(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
               
-              {/* Show this if database is empty */}
               {filteredInventory.length === 0 && (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>No items found.</td>
+                  <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>No items found.</td>
                 </tr>
               )}
             </tbody>
           </table>
 
-          {/* PAGINATION CONTROLS */}
           {filteredInventory.length > 0 && (
             <div className="pagination-controls">
               <span className="page-info">
