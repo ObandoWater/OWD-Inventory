@@ -68,7 +68,7 @@ export default function AdminLogs() {
 
           <div className="logs-body">
             <p className="logs-desc">
-              View and filter transaction logs for all items in the inventory. Use the search bar to find specific transactions by user or item name, and set date ranges to narrow down your results.
+              View and filter transaction logs for all items in the inventory.
             </p>
 
             <div className="logs-controls">

@@ -571,8 +571,8 @@ textarea.checkout-input {
 .logs-desc {
   color: #666;
   margin-bottom: 25px;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .logs-controls {
@@ -650,3 +650,172 @@ textarea.checkout-input {
 }
 
 
+/* --- STATISTICS TABS --- */
+.tabs-container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.tab-btn.active {
+  background-color: #1b3671;
+  color: #ffeb3b;
+}
+
+/* --- SIMPLE CSS CHARTS --- */
+.chart-container {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.bar-label {
+  width: 150px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-track {
+  flex: 1;
+  background-color: #eee;
+  border-radius: 6px;
+  height: 24px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  background-color: #1b3671;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.quarterly-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.quarter-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* --- VERTICAL GRAPH STYLES --- */
+.graph-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-top: 20px;
+}
+
+.graph-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.graph-header h2 {
+  color: #1b3671;
+  margin: 0 0 5px 0;
+}
+
+.graph-header p {
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* The actual graph plotting area */
+.graph-plot-area {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 300px; 
+  border-bottom: 3px solid #1b3671;
+  padding-bottom: 1px;
+  padding-top: 30px;
+}
+
+/* Individual Bar Container */
+.graph-bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: 80px;
+}
+
+/* The colored bar */
+.graph-bar {
+  width: 100%;
+  background-color: #ffeb3b; 
+  border: 2px solid #1b3671;
+  border-bottom: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  transition: height 0.5s ease;
+  position: relative;
+}
+
+/* The number floating above the bar */
+.graph-value {
+  position: absolute;
+  top: -25px;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+/* The Quarter label below the line */
+.graph-label {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #1b3671;
+  font-size: 16px;
+}

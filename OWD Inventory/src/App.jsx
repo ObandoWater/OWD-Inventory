@@ -4,6 +4,7 @@ import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminLogs from "./pages/admin/Logs";
 import UserInventory from "./pages/user/UserInventory";
+import AdminStatistics from "./pages/admin/Statistics";
 
 function App() {
   return (
@@ -27,6 +28,17 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminLogs />
+            </ProtectedRoute>
+          } 
+        />
+      </Routes>
+
+      <Routes>
+        <Route 
+          path="/admin/statistics" 
+          element={
+            <ProtectedRoute>
+              <AdminStatistics />
             </ProtectedRoute>
           } 
         />

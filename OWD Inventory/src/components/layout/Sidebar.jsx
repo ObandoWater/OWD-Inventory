@@ -39,6 +39,13 @@ export default function Sidebar() {
         >
           Logs
         </Link>
+
+        <Link 
+          to="/admin/statistics" 
+          className={`nav-item ${location.pathname === '/admin/statistics' ? 'active' : ''}`}
+        >
+          Statistics
+        </Link>
       </div>
 
       <button 
