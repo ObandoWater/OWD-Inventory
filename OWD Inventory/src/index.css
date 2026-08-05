@@ -18,18 +18,35 @@ body {
 }
 
 .sidebar {
+  transition: width 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh; 
   width: 250px;
+  z-index: 1000;
   background-color: #1b3671; /* Dark blue */
   display: flex;
   flex-direction: column;
-  position: relative;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   transition: width 0.3s ease;
   overflow: visible;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar.collapsed {
   width: 0px;
 }
+
+.sidebar.collapsed + .main-content {
+  margin-left: 0px; 
+}
+
 
 /* Hide elements when collapsed */
 .sidebar.collapsed .avatar-placeholder,
@@ -139,7 +156,10 @@ body {
 
 .main-content {
   flex-grow: 1;
-  padding: 30px;
+  transition: margin-left 0.3s ease; 
+  margin-left: 250px; 
+  padding: 30px; 
+  min-height: 100vh;
 }
 
 .admin-header {
