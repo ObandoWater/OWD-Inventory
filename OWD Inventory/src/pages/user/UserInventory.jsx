@@ -144,7 +144,9 @@ export default function UserInventory() {
                 <td data-label="Particulars">{item.name}</td>
                 <td data-label="Category">{item.category}</td>
                 <td data-label="Unit">{item.unit}</td>
-                <td data-label="Quantity">{item.currentStock}</td>
+                <td data-label="Quantity">
+                  <span className="qty-value">{item.currentStock}</span>
+                </td>
                 <td data-label="" style={{ textAlign: 'center' }}>
                   <button 
                     className="select-btn"

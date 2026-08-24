@@ -849,7 +849,8 @@ textarea.checkout-input {
   font-size: 16px;
 }
 
-                       /* ====================== MOBILE ====================== */
+
+                        /* ====================== MOBILE ====================== */
 @media (max-width: 480px) {
 
   .user-layout {
@@ -914,49 +915,74 @@ textarea.checkout-input {
 
   .inventory-table tr {
     background-color: white;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    margin-bottom: 15px;
-    padding: 5px 0;
+    margin-bottom: 16px;
     overflow: hidden;
+    border: none;
   }
 
   .inventory-table td {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    text-align: right;
-    padding: 12px 15px;
-    border-bottom: 1px solid #f0f0f0;
-    border-right: none;
+    display: block;
+    text-align: left;
+    padding: 0;
+    border: none;
     font-size: 14px;
   }
 
-  .inventory-table tr td:last-child {
-    border-bottom: none;
-  }
-
-  .inventory-table td[data-label]:before {
-    content: attr(data-label);
+  .inventory-table td:nth-child(1) {
+    font-size: 18px;
     font-weight: bold;
     color: #1b3671;
-    text-align: left;
-    padding-right: 15px;
+    padding: 16px 18px 4px;
   }
 
-  .inventory-table td[data-label=""] {
-    justify-content: center;
-    background-color: #f9f9f9;
-  }
-
-  .inventory-table td[data-label=""]:before {
-    content: none;
-  }
-
-  .select-btn {
-    padding: 10px 20px;
+  .inventory-table td:nth-child(2),
+  .inventory-table td:nth-child(3) {
+    padding: 2px 18px;
     font-size: 13px;
-    white-space: nowrap;
+    color: #777;
+  }
+
+  .inventory-table td:nth-child(2):before,
+  .inventory-table td:nth-child(3):before {
+    content: attr(data-label) ": ";
+    font-weight: bold;
+    color: #777;
+  }
+
+  .inventory-table td:nth-child(4) {
+    margin: 14px 18px 16px;
+    padding: 10px 16px;
+    background-color: #fff9db;
+    border: 1px solid #ffeb3b;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+    color: #7a6a00;
+    font-weight: bold;
+  }
+
+  .inventory-table td:nth-child(4):before {
+    content: attr(data-label) " : ";
+  }
+
+  .inventory-table td:nth-child(4) .qty-value {
+    font-size: 17px;
+    color: #1b3671;
+    margin-left: 4px;
+  }
+
+  .inventory-table td:nth-child(5) {
+    padding: 0;
+    border-top: 1px solid #eee;
+  }
+
+  .inventory-table td:nth-child(5) .select-btn {
+    width: 100%;
+    border-radius: 0;
+    padding: 14px;
+    font-size: 14px;
   }
 
   /* --- PAGINATION --- */
@@ -972,7 +998,7 @@ textarea.checkout-input {
     justify-content: center;
   }
 
-                                         /* --- CHECKOUT MODAL --- */
+                                     /* --- CHECKOUT MODAL --- */
   .modal-content {
     width: 90% !important;
     max-width: 360px;
