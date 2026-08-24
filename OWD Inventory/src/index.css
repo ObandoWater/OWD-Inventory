@@ -848,3 +848,112 @@ textarea.checkout-input {
   color: #1b3671;
   font-size: 16px;
 }
+
+
+                       /* ====================== MOBILE ====================== */
+@media (max-width: 480px) {
+  .user-layout {
+    padding: 15px;
+  }
+ 
+  .user-header {
+    padding: 12px 15px;
+    margin-bottom: 15px;
+  }
+ 
+  .logo-placeholder {
+    width: 45px;
+    height: 45px;
+    margin-right: 12px;
+  }
+ 
+  .user-header h1 {
+    font-size: 20px;
+  }
+ 
+  .user-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+ 
+  .search-input {
+    width: 100%;
+  }
+ 
+  .filter-group {
+    width: 100%;
+  }
+ 
+  .filter-group select {
+    width: 100%;
+    margin-left: 0;
+  }
+ 
+  .user-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+ 
+  .inventory-table {
+    min-width: 500px;
+  }
+ 
+  .inventory-table th,
+  .inventory-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+ 
+  .select-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+ 
+  .pagination-controls {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    text-align: center;
+    padding: 15px;
+  }
+ 
+  .page-btn-group {
+    justify-content: center;
+  }
+ 
+                                  /* --- CHECKOUT MODAL --- */
+  .modal-content {
+    width: 90% !important;
+    max-width: 360px;
+    padding: 20px !important;
+  }
+ 
+  .modal-content h2 {
+    font-size: 20px;
+  }
+ 
+  .form-row-2 {
+    flex-direction: column;
+    gap: 10px;
+  }
+ 
+  .checkout-input {
+    padding: 10px;
+    font-size: 13px;
+  }
+ 
+  .checkout-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+ 
+  .checkout-actions .btn-cancel,
+  .checkout-actions .btn-confirm {
+    width: 100%;
+    padding: 12px;
+  }
+}
