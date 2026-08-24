@@ -141,11 +141,11 @@ export default function UserInventory() {
             {/* 3. Loop through the inventory data to render rows */}
             {currentItems.map((item) => (
               <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.category}</td>
-                <td>{item.unit}</td>
-                <td>{item.currentStock}</td>
-                <td style={{ textAlign: 'center' }}>
+                <td data-label="Particulars">{item.name}</td>
+                <td data-label="Category">{item.category}</td>
+                <td data-label="Unit">{item.unit}</td>
+                <td data-label="Quantity">{item.currentStock}</td>
+                <td data-label="" style={{ textAlign: 'center' }}>
                   <button 
                     className="select-btn"
                     onClick={() => {
