@@ -179,7 +179,7 @@ export default function AdminEmployees() {
             <table className="inventory-table logs-table">
               <thead>
                 <tr>
-                  <th style={{ width: '60px' }}>PHOTO</th>
+                  <th style={{ width: '90px', textAlign: 'center' }}>PHOTO</th>
                   <th>EMPLOYEE NAME</th>
                   <th>ID NUMBER</th>
                   <th style={{ textAlign: 'center' }}>ACTION</th>
@@ -193,10 +193,10 @@ export default function AdminEmployees() {
                         <img 
                           src={emp.imageUrl} 
                           alt={emp.name} 
-                          style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #ddd' }}
+                          style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #ddd' }}
                         />
                       ) : (
-                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#1b3671', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px' }}>
+                        <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: '#1b3671', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '24px', margin: '0 auto' }}>
                           {emp.name.charAt(0).toUpperCase()}
                         </div>
                       )}
