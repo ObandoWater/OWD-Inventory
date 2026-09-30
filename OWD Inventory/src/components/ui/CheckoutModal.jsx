@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../config/firebase'; // Ensure this path is correct based on your folder structure
+import { db } from '../../config/firebase'; 
 import '../../index.css';
 
 export default function CheckoutModal({ isOpen, onClose, selectedItem, onConfirm }) {
   const [formData, setFormData] = useState({
-    name: "",
     employeeId: "",
     quantity: "",
     note: ""
   });
   
   const [error, setError] = useState("");
-  
-  // NEW: State to hold the dynamic list of employees from Firebase
   const [authorizedEmployees, setAuthorizedEmployees] = useState([]);
 
-  // 1. Fetch the employees list from Firebase when the modal opens
+  // Fetch the employees list from Firebase when the modal opens
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -30,9 +27,9 @@ export default function CheckoutModal({ isOpen, onClose, selectedItem, onConfirm
     };
 
     if (isOpen) {
-      setFormData({ name: "", employeeId: "", quantity: "", note: "" });
+      setFormData({ employeeId: "", quantity: "", note: "" });
       setError(""); 
-      fetchEmployees(); // Trigger the fetch
+      fetchEmployees(); 
     }
   }, [isOpen]);
 
@@ -42,23 +39,21 @@ export default function CheckoutModal({ isOpen, onClose, selectedItem, onConfirm
     e.preventDefault();
     setError(""); 
 
-    const trimmedName = formData.name.trim();
     const trimmedId = formData.employeeId.trim();
     const qty = Number(formData.quantity);
 
-    if (!trimmedName || !trimmedId) {
-      setError("Please provide a valid name and employee ID.");
+    if (!trimmedId) {
+      setError("Please provide a valid employee ID.");
       return;
     }
 
-    // 2. Check against the dynamic Firebase list instead of the hardcoded one
-    const isValidEmployee = authorizedEmployees.some(emp => 
-      emp.name.toLowerCase() === trimmedName.toLowerCase() && 
-      emp.employeeId === trimmedId // Make sure this matches the field name in your Firestore!
+    // Find the employee in the authorized list based on the entered ID
+    const matchedEmployee = authorizedEmployees.find(emp => 
+      emp.employeeId === trimmedId 
     );
 
-    if (!isValidEmployee) {
-      setError("Verification failed: Name and ID do not match our authorized records.");
+    if (!matchedEmployee) {
+      setError("Verification failed: ID does not match our authorized records.");
       return;
     }
 
@@ -72,9 +67,10 @@ export default function CheckoutModal({ isOpen, onClose, selectedItem, onConfirm
       return;
     }
 
+    // Attach the matched employee's name automatically in the background
     onConfirm({ 
       ...formData, 
-      name: trimmedName, 
+      name: matchedEmployee.name, 
       employeeId: trimmedId,
       quantity: qty, 
       item: selectedItem 
@@ -86,30 +82,18 @@ export default function CheckoutModal({ isOpen, onClose, selectedItem, onConfirm
       <div className="modal-content" style={{ width: '500px', padding: '40px' }}>
         
         <form onSubmit={handleSubmit} className="checkout-form">
-          <div className="form-row-2">
-            <input 
-              type="text" 
-              className="checkout-input" 
-              placeholder="Enter your name *" 
-              required 
-              value={formData.name} 
-              onChange={e => {
-                setFormData({...formData, name: e.target.value});
-                setError(""); 
-              }} 
-            />
-            <input 
-              type="text" 
-              className="checkout-input" 
-              placeholder="Enter employee ID *" 
-              required 
-              value={formData.employeeId} 
-              onChange={e => {
-                setFormData({...formData, employeeId: e.target.value});
-                setError(""); 
-              }} 
-            />
-          </div>
+          
+          <input 
+            type="text" 
+            className="checkout-input" 
+            placeholder="Enter employee ID *" 
+            required 
+            value={formData.employeeId} 
+            onChange={e => {
+              setFormData({...formData, employeeId: e.target.value});
+              setError(""); 
+            }} 
+          />
           
           <input 
             type="text" 
