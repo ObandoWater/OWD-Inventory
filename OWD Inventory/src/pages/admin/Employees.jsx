@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { collection, onSnapshot, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../config/firebase'; 
 import Sidebar from '../../components/layout/Sidebar'; 
@@ -8,12 +8,15 @@ export default function AdminEmployees() {
   const [employees, setEmployees] = useState([]);
   const [newName, setNewName] = useState("");
   const [newId, setNewId] = useState("");
+  
+  // NEW: State for file upload
+  const [imageFile, setImageFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null); 
 
-  // --- PAGINATION STATE ---
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8; // Adjust this number to show more or fewer rows per page
+  const itemsPerPage = 8; 
 
-  // Fetch authorized employees from Firebase
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "employees"), 
       (snapshot) => {
@@ -21,36 +24,67 @@ export default function AdminEmployees() {
           id: doc.id,
           ...doc.data()
         }));
-        
-        // Sort alphabetically by name
         empList.sort((a, b) => a.name.localeCompare(b.name));
         setEmployees(empList);
       },
       (error) => console.error("Error fetching employees: ", error.message)
     );
-    
     return () => unsubscribe();
   }, []);
 
-  // Add a new employee to Firebase
   const handleAddEmployee = async (e) => {
     e.preventDefault();
     if (!newName.trim() || !newId.trim()) return;
 
+    setIsUploading(true);
+    let finalImageUrl = "";
+
     try {
+      // 1. If a file was selected, upload it to Cloudinary first
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        
+        // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
+        formData.append("upload_preset", "OWD-Employee"); 
+        const cloudName = "srrvdlsp"; 
+
+        const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const uploadData = await uploadResponse.json();
+        
+        if (uploadData.secure_url) {
+          finalImageUrl = uploadData.secure_url;
+        } else {
+          console.error("Cloudinary upload failed:", uploadData);
+          alert("Image upload failed. Saving employee without photo.");
+        }
+      }
+
+      // 2. Save the employee data (and the new Cloudinary URL) to Firebase
       await addDoc(collection(db, "employees"), {
         name: newName.trim(),
-        employeeId: newId.trim()
+        employeeId: newId.trim(),
+        imageUrl: finalImageUrl 
       });
+
+      // 3. Clear the form
       setNewName("");
       setNewId("");
+      setImageFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = ""; // Resets the file input UI
+
     } catch (error) {
       console.error("Error adding employee: ", error);
       alert("Failed to add employee.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  // Delete an employee from Firebase
   const handleDelete = async (id, name) => {
     const confirmDelete = window.confirm(`Are you sure you want to revoke access for ${name}?`);
     if (confirmDelete) {
@@ -63,10 +97,8 @@ export default function AdminEmployees() {
     }
   };
 
-  // --- PAGINATION MATH & LOGIC ---
   const totalPages = Math.ceil(employees.length / itemsPerPage);
   
-  // Safety check: if they delete the last item on page 2, bump them back to page 1
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
@@ -112,8 +144,32 @@ export default function AdminEmployees() {
                 style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', backgroundColor: '#f9f9f9' }}
               />
             </div>
-            <button type="submit" className="save-btn" style={{ height: '40px', padding: '0 20px' }}>
-              + Add to List
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '5px', fontWeight: 'bold' }}>Upload Photo (Optional)</label>
+              
+              {/* UPDATED: Changed from a text input to a file input */}
+              <input 
+                type="file" 
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={(e) => setImageFile(e.target.files[0])}
+                style={{ width: '100%', padding: '7px', borderRadius: '6px', border: '1px solid #ddd', backgroundColor: '#f9f9f9' }}
+              />
+            </div>
+            
+            {/* UPDATED: Disable button and show loading text while uploading */}
+            <button 
+              type="submit" 
+              className="save-btn" 
+              disabled={isUploading}
+              style={{ 
+                height: '40px', 
+                padding: '0 20px', 
+                opacity: isUploading ? 0.7 : 1,
+                cursor: isUploading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {isUploading ? "Uploading..." : "+ Add to List"}
             </button>
           </form>
         </section>
@@ -123,15 +179,28 @@ export default function AdminEmployees() {
             <table className="inventory-table logs-table">
               <thead>
                 <tr>
+                  <th style={{ width: '60px' }}>PHOTO</th>
                   <th>EMPLOYEE NAME</th>
                   <th>ID NUMBER</th>
                   <th style={{ textAlign: 'center' }}>ACTION</th>
                 </tr>
               </thead>
               <tbody>
-                {/* Loop through currentEmployees instead of the full employees array */}
                 {currentEmployees.map((emp) => (
                   <tr key={emp.id}>
+                    <td>
+                      {emp.imageUrl ? (
+                        <img 
+                          src={emp.imageUrl} 
+                          alt={emp.name} 
+                          style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #ddd' }}
+                        />
+                      ) : (
+                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#1b3671', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px' }}>
+                          {emp.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </td>
                     <td style={{ fontWeight: 'bold', color: '#333' }}>{emp.name}</td>
                     <td style={{ color: '#555' }}>{emp.employeeId}</td>
                     <td style={{ textAlign: 'center' }}>
@@ -146,7 +215,7 @@ export default function AdminEmployees() {
                 ))}
                 {employees.length === 0 && (
                   <tr>
-                    <td colSpan="3" style={{ textAlign: 'center', padding: '30px', color: '#888' }}>
+                    <td colSpan="4" style={{ textAlign: 'center', padding: '30px', color: '#888' }}>
                       No authorized employees found. Add one above.
                     </td>
                   </tr>
