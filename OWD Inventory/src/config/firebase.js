@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-
+/*
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -9,6 +9,17 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID
+};
+*/
+// Replace these with the exact keys from your web project
+const firebaseConfig = {
+  apiKey: "AIzaSyBz_dtVDzNavTHzDerP41WA-TSsq76yry4",
+  authDomain: "owd-inventory.firebaseapp.com",
+  projectId: "owd-inventory",
+  storageBucket: "owd-inventory.firebasestorage.app",
+  messagingSenderId: "982308543719",
+  appId: "1:982308543719:web:be5a0448536a36dfdb5642",
+  measurementId: "G-8LTL44359J"
 };
 
 // Initialize Firebase

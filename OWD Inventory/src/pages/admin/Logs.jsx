@@ -3,6 +3,8 @@ import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../../config/firebase'; 
 import Sidebar from '../../components/layout/Sidebar'; 
 import LogsTable from '../../components/ui/LogsTable'; 
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import '../../index.css'; 
 
 export default function AdminLogs() {
@@ -54,6 +56,60 @@ export default function AdminLogs() {
     return matchesSearch && matchesStartDate && matchesEndDate;
   });
 
+  // --- EXPORT PDF LOGIC ---
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+
+    // 1. Add Report Header
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Transaction Logs", 14, 20);
+
+    // 2. Add Date Range Subtitle dynamically based on active filters
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    let dateText = "All time";
+    if (startDate && endDate) {
+      dateText = `${startDate} to ${endDate}`;
+    } else if (startDate) {
+      dateText = `From ${startDate}`;
+    } else if (endDate) {
+      dateText = `Until ${endDate}`;
+    }
+    doc.text(`Date Range: ${dateText}`, 14, 28);
+
+    // 3. Setup Table Data exactly as it appears in the UI
+    const tableColumn = ["DATE & TIME", "USER", "ACTION", "DETAILS"];
+    const tableRows = filteredLogs.map(log => {
+      const dateStr = log.timestamp ? log.timestamp.toDate().toLocaleString() : "N/A";
+      const userStr = `${log.employeeName}\nID: ${log.employeeId}`;
+      const actionStr = `Checked out ${log.quantityTaken} ${log.unit ? log.unit : "Unit"}(s) of ${log.itemName}`;
+      const detailsStr = log.note || "-";
+      
+      return [dateStr, userStr, actionStr, detailsStr];
+    });
+
+    // 4. Generate Table
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 35,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 4, valign: 'middle' },
+      headStyles: { fillColor: [27, 54, 113], textColor: [255, 255, 255], fontStyle: 'bold' },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 45 },
+        2: { cellWidth: 'auto' },
+        3: { cellWidth: 40 }
+      }
+    });
+
+    // 5. Save the file with a smart filename
+    const filename = `OWD_Logs_${startDate || 'start'}_to_${endDate || 'end'}.pdf`;
+    doc.save(filename);
+  };
+
   return (
     <div className="admin-layout">
       
@@ -62,8 +118,16 @@ export default function AdminLogs() {
       <main className="main-content">
         <div className="logs-card">
           
-          <header className="logs-header">
+          <header className="logs-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2>Logs</h2>
+            
+            {/* EXPORT BUTTON */}
+            <button 
+              onClick={handleExportPDF}
+              style={{ backgroundColor: '#d32f2f', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}
+            >
+             Export Filtered PDF
+            </button>
           </header>
 
           <div className="logs-body">
